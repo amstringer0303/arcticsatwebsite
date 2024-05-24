@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sea Ice Forecasting for Kivalina</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+        #forecast {
+            height: 600px;
+            width: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sea Ice Viewing for Kivalina</h1>
+    <div id="map"></div>
+    <h2>Sea Ice Forecast</h2>
+    <iframe id="forecast" src="https://www.weather.gov/afc/ice"></iframe>
+    <script>
+        var map = L.map('map').setView([67.7269, -164.5332], 10);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var today = new Date().toISOString().split('T')[0];
+
+        fetch(`https://<YOUR_HEROKU_APP_NAME>.herokuapp.com/data?date=${today}`)
+            .then(response => response.json())
+            .then(data => {
+                var imageUrl = data.url;
+                var imageBounds = [[67.6269, -164.6332], [67.8269, -164.4332]];
+                L.imageOverlay(imageUrl, imageBounds).addTo(map);
+            });
+    </script>
+</body>
+</html>
